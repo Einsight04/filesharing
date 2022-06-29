@@ -76,7 +76,10 @@ function validateToken(req: any, res: any, next: any) {
     if (token == null) return res.sendStatus(401);
 
     jwt.verify(token, process.env.TOKEN_SECRET || 'jwtSecret', (err: any, decoded: any) => {
-        if (err) return res.sendStatus(403);
+        if (err) {
+            console.log('error: ', err);
+            return res.sendStatus(403);
+        }
         req.tokenData = decoded;
         next();
     });
@@ -145,7 +148,7 @@ app.post('/api/users/register', (req, res) => {
     })
 })
 
-app.post('/api/files/upload', upload.single('file'), async (req, res) => {
+app.post('/api/files/upload', upload.single('file'), validateToken, async (req, res) => {
     const {file} = req;
     console.log(file?.filename);
 

@@ -16,6 +16,9 @@ const Dashboard = () => {
 
         const response = await fetch(`http://localhost:4000/api/files/upload`, {
             method: "POST",
+            headers: {
+                "Authorization": `${document.cookie.split("=")[1]}`
+            },
             body: formData
         });
 

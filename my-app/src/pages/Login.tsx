@@ -50,7 +50,7 @@ const Login = (): JSX.Element => {
         dispatch(setLastName(data.lastName));
         dispatch(setEmail(data.email));
 
-        navigate('/files');
+        navigate('/dashboard');
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
