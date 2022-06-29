@@ -12,13 +12,10 @@ const Dashboard = () => {
         const file = e.target.files![0];
 
         const formData = new FormData();
-        formData.append(file.name, file, file.name);
+        formData.append("file", file);
 
         const response = await fetch(`http://localhost:4000/api/files/upload`, {
             method: "POST",
-            headers: {
-                "Content-Type": "multipart/form-data; boundary=MyBoundary"
-            },
             body: formData
         });
 
