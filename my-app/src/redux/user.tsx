@@ -33,11 +33,17 @@ export const counterSlice = createSlice({
         },
         setEmail: (state, action: PayloadAction<string>) => {
             state.email = action.payload
+        },
+        //reset all fields
+        clearUser: (state) => {
+            state.firstName = ''
+            state.lastName = ''
+            state.email = ''
         }
     },
 })
 
 // Action creators are generated for each case reducer function
-export const {login, logout, setFirstName, setLastName, setEmail} = counterSlice.actions
+export const {login, logout, setFirstName, setLastName, setEmail, clearUser} = counterSlice.actions
 
 export default counterSlice.reducer

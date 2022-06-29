@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {Link} from 'react-router-dom'
 import {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {logout} from "../redux/user";
+import {clearUser, logout} from "../redux/user";
 import type {RootState} from '../redux/store';
 import {Dispatch} from "@reduxjs/toolkit";
 
@@ -14,7 +14,7 @@ const Navbar = (): JSX.Element => {
 
     useEffect(() => {
         if (loggedIn) {
-            setOptions(['contact', 'files'])
+            setOptions(['contact', 'dashboard'])
         } else {
             setOptions(['contact', 'login'])
         }
@@ -24,6 +24,7 @@ const Navbar = (): JSX.Element => {
         document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 
         dispatch(logout());
+        dispatch(clearUser());
     }
 
     return (

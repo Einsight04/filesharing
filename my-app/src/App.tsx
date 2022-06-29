@@ -9,7 +9,7 @@ import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ProtectedRoutes from "./authentication/ProtectedRoutes";
-import Files from "./pages/Files";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
     return (
@@ -21,7 +21,7 @@ const App = () => {
                 <Route path='register' element={<Register/>}/>
                 <Route path='contact' element={<Contact/>}/>
                 <Route element={<ProtectedRoutes/>}>
-                    <Route path='files' element={<Files/>}/>
+                    <Route path='dashboard' element={<Dashboard/>}/>
                 </Route>
             </Routes>
         </div>

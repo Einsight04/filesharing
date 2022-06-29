@@ -9,10 +9,8 @@ import session from "express-session";
 import Database from 'better-sqlite3';
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
-
-
-// variables
-const saltRounds: number = 10;
+import fs from 'fs/promises';
+import multer from 'multer';
 
 // file pathing setup
 const __filename: string = fileURLToPath(import.meta.url);
@@ -59,6 +57,18 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
     }
 }))
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, '..', 'uploads'));
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+        cb(null, file.fieldname + '-' + uniqueSuffix)
+    }
+})
+
+const upload = multer({ storage: storage })
 
 function validateToken(req: any, res: any, next: any) {
     const authHeader = req.headers["authorization"];
@@ -117,7 +127,7 @@ app.post('/api/users/register', (req, res) => {
     const {firstName, lastName, email, password} = req.body;
 
     // hash password
-    const hashedPassword = bcrypt.hashSync(password, saltRounds);
+    const hashedPassword = bcrypt.hashSync(password, 10);
 
     // if email already exists, return false
     if (db.prepare(`SELECT *
@@ -136,6 +146,12 @@ app.post('/api/users/register', (req, res) => {
     })
 })
 
+app.post('/api/files/upload', upload.single('file'), async (req, res) => {
+    const {file} = req;
+    console.log(file?.filename);
+
+    res.sendStatus(200);
+});
 
 app.listen(process.env.PORT || 4000, () => {
     console.log(`Server listening on port ${process.env.PORT || 4000}`);

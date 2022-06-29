@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Link} from "react-router-dom";
 import {useNavigate} from "react-router-dom";
 import {useDispatch} from 'react-redux'
-import {login, setFirstName, setLastName, setEmail} from '../redux/user';
+import {login, setFirstName, setLastName, setEmail, } from '../redux/user';
 
 interface FieldValueState {
     email: string;
