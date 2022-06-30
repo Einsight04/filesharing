@@ -1,3 +1,4 @@
+import {db} from './database.js';
 import dotenv from 'dotenv';
 import path from 'path';
 import {fileURLToPath} from 'url';
@@ -6,10 +7,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 import session from "express-session";
-import {db} from './Database';
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
-import fs from 'fs/promises';
 import multer from 'multer';
 
 // file pathing setup

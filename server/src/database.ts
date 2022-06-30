@@ -1,9 +1,7 @@
-import {__dirname} from "./main";
-import path from 'path';
 import Database from 'better-sqlite3';
 
 // database setup
-export const db: Database.Database = new Database(path.join(__dirname, '..', 'tracker.db'), {
+export const db: Database.Database = new Database('C:\Users\ghait\WebstormProjects\filesharing\server\tracker.db', {
     fileMustExist: false, // if the file doesn't exist, it will be created
     readonly: false,      // if the file is readonly, it will be opened in read-write mode
 });
