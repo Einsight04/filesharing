@@ -88,7 +88,7 @@ function validateToken(req: any, res: any, next: any) {
 
 function generateAccessToken(userId: string) {
     return jwt.sign({userId}, process.env.JWT_SECRET || 'jwtSecret', {
-        expiresIn: '1h'
+        expiresIn: 60 * 60 * 24 * 7 // 1 week
     });
 }
 
