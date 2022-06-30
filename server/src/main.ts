@@ -1,12 +1,12 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import {fileURLToPath} from 'url';
-import express, {Express} from 'express';
+import express, {Express, Request} from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 import session from "express-session";
-import Database from 'better-sqlite3';
+import {db} from './Database';
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 import fs from 'fs/promises';
@@ -18,24 +18,6 @@ export const __dirname: string = path.dirname(__filename);
 
 // .env setup
 dotenv.config({path: path.join(__dirname, '../.env')});
-
-
-// database setup
-const db: Database.Database = new Database(path.join(__dirname, '..', 'tracker.db'), {
-    fileMustExist: false,
-    readonly: false,
-});
-
-// create table if it doesn't exist
-db.prepare(`CREATE TABLE IF NOT EXISTS users
-            (
-                userId    INTEGER PRIMARY KEY AUTOINCREMENT,
-                firstName TEXT,
-                lastName  TEXT,
-                email     TEXT,
-                password  TEXT
-            )`).run();
-
 
 // express setup
 const app: Express = express();
@@ -58,7 +40,7 @@ app.use(session({
     }
 }))
 
-const storage = multer.diskStorage({
+const storage: multer.StorageEngine = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, path.join(__dirname, '..', 'storage'));
     },
@@ -67,11 +49,11 @@ const storage = multer.diskStorage({
     }
 })
 
-const upload = multer({ storage: storage })
+const upload: multer.Multer = multer({storage: storage})
 
 function validateToken(req: any, res: any, next: any) {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
+    const authHeader: string = req.headers["authorization"];
+    const token: string = authHeader && authHeader.split(" ")[1];
 
     if (token == null) return res.sendStatus(401);
 
