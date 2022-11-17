@@ -10,6 +10,8 @@ import session from "express-session";
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 import multer from 'multer';
+import fs from 'fs/promises';
+import md5 from 'md5';
 
 // file pathing setup
 const __filename: string = fileURLToPath(import.meta.url);
@@ -29,6 +31,7 @@ app.use(cors({
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true})); // parse application/x-www-form-urlencoded
 app.use(bodyParser.json()); // parse application/json
+app.use(bodyParser.raw({type: 'application/octet-stream', limit: '5gb'}));
 
 app.use(session({
     secret: "testing",
@@ -129,12 +132,35 @@ app.post('/api/users/register', (req, res) => {
     })
 })
 
-app.post('/api/files/upload', upload.single('file'), validateToken, async (req, res) => {
-    const {file} = req;
-    console.log(file?.filename);
+app.post('/api/files/upload', async (req, res) => {
+    const {name, size, currentChunkIndex, totalChunks} = req.query;
+    // @ts-ignore
+    const firstChunk = parseInt(currentChunkIndex) === 0;
+    // @ts-ignore
+    const lastChunk = parseInt(currentChunkIndex) === parseInt(totalChunks) - 1;
+    // @ts-ignore
+    const ext = name!.split('.').pop();
+    const data = req.body.toString().split(',')[1];
+    const buffer = new Buffer(data);
+    const tmpFileName = 'tmp_' + md5(name + req.ip) + '.' + ext;
 
-    res.sendStatus(200);
+    if (firstChunk) {
+        await fs.unlink(path.join(__dirname, '..', 'storage', tmpFileName));
+    }
+
+    await fs.appendFile(path.join(__dirname, '..', 'storage', `${tmpFileName}`), buffer);
+
+    if (lastChunk) {
+        const finalFileName = md5(Date.now()).substring(0, 6) + '.' + ext;
+        await fs.rename(path.join(__dirname, '..', 'storage', tmpFileName), path.join(__dirname, '..', 'storage', finalFileName));
+        res.json({
+            finalFileName
+        })
+    } else {
+        res.json('ok');
+    }
 });
+
 
 app.listen(process.env.PORT || 4000, () => {
     console.log(`Server listening on port ${process.env.PORT || 4000}`);
